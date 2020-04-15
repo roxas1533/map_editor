@@ -241,7 +241,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 		int x = e.getX();
 		int y = e.getY();
 		int btn = e.getModifiers();
-		if (x < map[0].length * width + 120 && x > 120 && map.length * height > y && y > 0) {
+		if (x <= map[0].length * width + 120 && x > 120 && map.length * height > y && y > 0) {
 			if (!changed) {
 				changed = true;
 				MapEditor.title = " * " + MapEditor.title;

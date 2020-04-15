@@ -10,7 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -58,6 +60,52 @@ public class MapEditor extends JFrame {
 				setEnabled(false);
 			}
 		});
+
+		menuitem1_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser filechooser = new JFileChooser();
+				FileFilter filter = new FileNameExtensionFilter("マップファイル(*.map)", "map");
+				filechooser.addChoosableFileFilter(filter);
+				filechooser.setAcceptAllFileFilterUsed(false);
+				int selected = filechooser.showOpenDialog(frame);
+				if (selected == JFileChooser.APPROVE_OPTION) {
+					try {
+						File file = filechooser.getSelectedFile();
+						FileReader fileReader = new FileReader(file);
+						BufferedReader br = new BufferedReader(fileReader);
+						//行読み込み
+						String line = br.readLine();
+						int ROW = Integer.parseInt(line);
+						//列読み込み
+						line = br.readLine();
+						int COL = Integer.parseInt(line);
+						MainPanel.map = new int[ROW][COL];
+
+						for (int i = 0; i < ROW; i++) {
+
+							line = br.readLine();
+							String[] str = line.split(",", 0);
+							for (int n = 0; n < COL; n++) {
+								MainPanel.map[i][n] = Integer.parseInt(str[n]);
+							}
+						}
+						MainPanel.sc = new Scroll(120, 30 * 20,
+								MainPanel.map[0].length > 23
+										? (int) Math.floor(23.0 / MainPanel.map[0].length * 30 * 23)
+										: (30 * 23),
+								30);
+						title = file.getName() + " - マップエディタ";
+						setTitle(title);
+						// 最後にファイルを閉じてリソースを開放する
+						br.close();
+
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+		});
+
 		menuitem1_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser filechooser = new JFileChooser();
