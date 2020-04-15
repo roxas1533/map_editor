@@ -67,14 +67,14 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 					}
 					if (map[i][j] != 0)
 						g.fillRect(120 + j * width - offsetX, i * height, width, height);
-//					g.drawString(j + "", 120 + j * width - offsetX, i * height);
+					//					g.drawString(j + "", 120 + j * width - offsetX, i * height);
 				}
 			}
 			g.setColor(Color.GREEN);
 			Graphics2D g2 = (Graphics2D) g;
 			BasicStroke bs = new BasicStroke(5);
 			g2.setStroke(bs);
-//			g.drawRect((int) nowChip.x, (int) nowChip.y, nowChip.width, nowChip.height);
+			//			g.drawRect((int) nowChip.x, (int) nowChip.y, nowChip.width, nowChip.height);
 			sc.draw(g);
 		}
 		//------------------------------------------------------ここまで----------------------------------------------
@@ -209,10 +209,14 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 	public void drawMap(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
+		int btn = e.getModifiers();
 		if (x < map[0].length * width + 120 && x > 120 && map.length * height > y && y > 0) {
 			nowChip.x = e.getX() / width * width;
 			nowChip.y = e.getY() / width * height;
-			map[e.getY() / height][(e.getX()+offsetX - 120) / width] = nowSelect.selectId;
+			if (btn == 16)
+				map[e.getY() / height][(e.getX() + offsetX - 120) / width] = nowSelect.selectId;
+			else
+				map[e.getY() / height][(e.getX() + offsetX - 120) / width] = 0;
 		}
 	}
 }

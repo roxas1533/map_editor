@@ -10,9 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -22,10 +26,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class MapEditor extends JFrame {
 	static MapEditor frame;
-
+	public JMenuItem menuitem1_3;
 	MapEditor() {
 		setTitle("マップエディタ");
 		MainPanel panel = new MainPanel();
@@ -39,14 +45,48 @@ public class MapEditor extends JFrame {
 		menubar.add(menu2);
 		JMenuItem menuitem1_1 = new JMenuItem("    新規");
 		JMenuItem menuitem1_2 = new JMenuItem("    開く");
-		JMenuItem menuitem1_3 = new JMenuItem("    名前を付けて保存");
+		 menuitem1_3 = new JMenuItem("    名前を付けて保存");
+		menuitem1_3.setEnabled(false);
 
 		menuitem1_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				T subwindow = new T();
-
 				subwindow.setVisible(true);
 				setEnabled(false);
+			}
+		});
+		menuitem1_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser filechooser = new JFileChooser();
+				FileFilter filter = new FileNameExtensionFilter("マップファイル(*.map)", "map");
+				filechooser.addChoosableFileFilter(filter);
+				filechooser.setAcceptAllFileFilterUsed(false);
+				int selected = filechooser.showSaveDialog(frame);
+				if (selected == JFileChooser.APPROVE_OPTION) {
+					try {
+						File file = filechooser.getSelectedFile();
+						FileWriter fe;
+						if (file.toString().substring(file.toString().length() - 4).equals(".map")) {
+							fe = new FileWriter(file);
+						} else {
+							fe = new FileWriter(file + ".map");
+						}
+						fe.write(MainPanel.map.length + "\r\n");
+						fe.write(MainPanel.map[0].length + "\r\n");
+						for (int i = 0; i < MainPanel.map.length; i++) {
+							for (int j = 0; j < MainPanel.map[0].length; j++) {
+								fe.write(MainPanel.map[i][j] + "");
+								if (j != MainPanel.map[0].length - 1)
+									fe.write(",");
+							}
+							fe.write("\r\n");
+						}
+
+						fe.close();
+					} catch (IOException ex) {
+						System.out.println(ex);
+					}
+				}
 			}
 		});
 
@@ -147,12 +187,14 @@ class P extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		try {
 			MainPanel.map = new int[Integer.parseInt(tate.getText())][Integer.parseInt(yoko.getText())];
+			MainPanel.sc = new Scroll(120, 30 * 20,
+					MainPanel.map[0].length > 23 ? (int) Math.floor(23.0 / MainPanel.map[0].length * 30 * 23)
+							: (30 * 23),
+					30);
 			Arrays.stream(MainPanel.map).forEach(a -> Arrays.fill(a, 0));
 			Window w = SwingUtilities.getWindowAncestor(this);
 			MapEditor.frame.setEnabled(true);
-			MainPanel.sc = new Scroll(120, 30 * 20,
-					MainPanel.map[0].length > 23 ? (int)Math.floor(23.0 / MainPanel.map[0].length * 30 * 23)
-							: (30 * 23),30);
+			MapEditor.frame.menuitem1_3.setEnabled(true);
 			w.dispose();
 		} catch (NumberFormatException ex) {
 			JOptionPane.showMessageDialog(this, new JLabel("0以上の半角数字を入力してください"));
