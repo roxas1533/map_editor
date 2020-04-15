@@ -5,11 +5,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
@@ -21,6 +24,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 	static Scroll sc;
 	int width = 30;
 	int height = 30;
+	public boolean changed;
 	static int offsetX;
 	int[][] chipInfo = {
 			{ 0, 1, 2, 3 },
@@ -116,13 +120,39 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO 自動生成されたメソッド・スタブ
 
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		int keycode = e.getKeyCode();
 
+		int mod = e.getModifiersEx();
+		if ((mod & InputEvent.CTRL_DOWN_MASK) != 0) {
+			if (keycode == KeyEvent.VK_S) {
+				if (MapEditor.nowSelect != null) {
+					try {
+						FileWriter fe = new FileWriter(MapEditor.nowSelect);
+						fe.write(MainPanel.map.length + "\r\n");
+						fe.write(MainPanel.map[0].length + "\r\n");
+						for (int i = 0; i < MainPanel.map.length; i++) {
+							for (int j = 0; j < MainPanel.map[0].length; j++) {
+								fe.write(MainPanel.map[i][j] + "");
+								if (j != MainPanel.map[0].length - 1)
+									fe.write(",");
+							}
+							fe.write("\r\n");
+						}
+						fe.close();
+						if (changed)
+							MapEditor.frame.setTitle(MapEditor.title.substring(3));
+					} catch (IOException e1) {
+						// TODO 自動生成された catch ブロック
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -135,7 +165,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 		while (true) {
 			repaint();
 			nowSelect.update();
-			if (map != null)
+
+			if (map != null & sc != null)
 				offsetX = (int) ((sc.x - 120) / (WIDTH - 120) * map[0].length * width);
 			try {
 				Thread.sleep(30);
@@ -211,6 +242,12 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 		int y = e.getY();
 		int btn = e.getModifiers();
 		if (x < map[0].length * width + 120 && x > 120 && map.length * height > y && y > 0) {
+			if (!changed) {
+				changed = true;
+				MapEditor.title = " * " + MapEditor.title;
+				MapEditor.frame.setTitle(MapEditor.title);
+			}
+
 			nowChip.x = e.getX() / width * width;
 			nowChip.y = e.getY() / width * height;
 			if (btn == 16)

@@ -32,8 +32,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class MapEditor extends JFrame {
 	static MapEditor frame;
 	public JMenuItem menuitem1_3;
+	static File nowSelect = null;
+	static String title = "無題 - マップエディタ";
+
 	MapEditor() {
-		setTitle("マップエディタ");
+		setTitle(title);
 		MainPanel panel = new MainPanel();
 		Container contentPane = getContentPane();
 		contentPane.add(panel);
@@ -45,7 +48,7 @@ public class MapEditor extends JFrame {
 		menubar.add(menu2);
 		JMenuItem menuitem1_1 = new JMenuItem("    新規");
 		JMenuItem menuitem1_2 = new JMenuItem("    開く");
-		 menuitem1_3 = new JMenuItem("    名前を付けて保存");
+		menuitem1_3 = new JMenuItem("    名前を付けて保存");
 		menuitem1_3.setEnabled(false);
 
 		menuitem1_1.addActionListener(new ActionListener() {
@@ -65,12 +68,14 @@ public class MapEditor extends JFrame {
 				if (selected == JFileChooser.APPROVE_OPTION) {
 					try {
 						File file = filechooser.getSelectedFile();
-						FileWriter fe;
+						String saveFile;
 						if (file.toString().substring(file.toString().length() - 4).equals(".map")) {
-							fe = new FileWriter(file);
+							saveFile = file.toString();
 						} else {
-							fe = new FileWriter(file + ".map");
+							saveFile = file.toString() + ".map";
 						}
+						nowSelect = new File(saveFile);
+						FileWriter fe = new FileWriter(saveFile);
 						fe.write(MainPanel.map.length + "\r\n");
 						fe.write(MainPanel.map[0].length + "\r\n");
 						for (int i = 0; i < MainPanel.map.length; i++) {
@@ -81,7 +86,9 @@ public class MapEditor extends JFrame {
 							}
 							fe.write("\r\n");
 						}
-
+						title = new File(saveFile).getName() + " - マップエディタ";
+						panel.changed = false;
+						setTitle(title);
 						fe.close();
 					} catch (IOException ex) {
 						System.out.println(ex);
@@ -195,6 +202,9 @@ class P extends JPanel implements ActionListener {
 			Window w = SwingUtilities.getWindowAncestor(this);
 			MapEditor.frame.setEnabled(true);
 			MapEditor.frame.menuitem1_3.setEnabled(true);
+			MapEditor.nowSelect = null;
+			MapEditor.title = "無題 - マップエディタ";
+			MapEditor.frame.setTitle(MapEditor.title);
 			w.dispose();
 		} catch (NumberFormatException ex) {
 			JOptionPane.showMessageDialog(this, new JLabel("0以上の半角数字を入力してください"));
