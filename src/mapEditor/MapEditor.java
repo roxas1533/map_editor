@@ -45,14 +45,21 @@ public class MapEditor extends JFrame {
 		setResizable(false);
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu1 = new JMenu("ファイル");
-		JMenu menu2 = new JMenu("編集");
+		JMenu menu2 = new JMenu("ツール");
 		menubar.add(menu1);
 		menubar.add(menu2);
 		JMenuItem menuitem1_1 = new JMenuItem("    新規");
 		JMenuItem menuitem1_2 = new JMenuItem("    開く");
 		menuitem1_3 = new JMenuItem("    名前を付けて保存");
 		menuitem1_3.setEnabled(false);
+		JMenuItem menuitem2_1 = new JMenuItem("    座標の表示");
 
+
+		menuitem2_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainPanel.pool=!MainPanel.pool;
+			}
+		});
 		menuitem1_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				T subwindow = new T();
@@ -145,6 +152,7 @@ public class MapEditor extends JFrame {
 			}
 		});
 
+		menu2.add(menuitem2_1);
 		menu1.add(menuitem1_1);
 		menu1.add(menuitem1_2);
 		menu1.add(menuitem1_3);

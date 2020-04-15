@@ -26,6 +26,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 	int height = 30;
 	public boolean changed;
 	static int offsetX;
+	static boolean pool;
 	int[][] chipInfo = {
 			{ 0, 1, 2, 3 },
 			{ 4, 5, 6, 7 },
@@ -71,7 +72,10 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 					}
 					if (map[i][j] != 0)
 						g.fillRect(120 + j * width - offsetX, i * height, width, height);
-					//					g.drawString(j + "", 120 + j * width - offsetX, i * height);
+					if (pool) {
+						g.setColor(Color.black);
+						g.drawString(j + "," + i, 120 + j * width - offsetX, (i + 1) * height);
+					}
 				}
 			}
 			g.setColor(Color.GREEN);
@@ -241,7 +245,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 		int x = e.getX();
 		int y = e.getY();
 		int btn = e.getModifiers();
-		if (x <= map[0].length * width + 120 && x > 120 && map.length * height > y && y > 0) {
+		if (x < (map[0].length) * width + 120 && x > 120 && map.length * height > y && y > 0) {
 			if (!changed) {
 				changed = true;
 				MapEditor.title = " * " + MapEditor.title;
