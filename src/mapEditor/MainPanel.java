@@ -5,15 +5,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MediaTracker;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class MainPanel extends JPanel implements KeyListener, Runnable, MouseListener, MouseMotionListener {
@@ -27,15 +31,25 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 	public boolean changed;
 	static int offsetX;
 	static boolean pool;
+	int imgSize = 0;
 	int[][] chipInfo = {
 			{ 0, 1, 2, 3 },
 			{ 4, 5, 6, 7 },
 	};
 	private GameObject nowSelect = new GameObject(0, 0, 30, 30);
 	private GameObject nowChip = new GameObject(120, 0, width, height);
+	BufferedImage img;
+	MediaTracker tracker;
 
 	MainPanel() {
-
+		tracker = new MediaTracker(this);
+		try {
+			img = ImageIO.read(new File("img/block.jpg"));
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		tracker.addImage(img, 0);
 		setFocusable(true);
 		addKeyListener(this);
 		addMouseListener(this);
@@ -43,82 +57,95 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		gameLoop = new Thread(this);
 		gameLoop.start();
+
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
 		//------------------------------------------------------マップ本体----------------------------------------------
-		if (map != null) {
-			for (int i = 0; i < map.length; i++) {
-				for (int j = 0; j < map[i].length; j++) {
-					switch (map[i][j]) {
+		if (tracker.checkID(0, true)) {
+			imgSize = img.getWidth(this) / 4;
+
+			if (map != null) {
+				for (int i = 0; i < map.length; i++) {
+					for (int j = 0; j < map[i].length; j++) {
+						switch (map[i][j]) {
+						case 0:
+							g.setColor(Color.black);
+							g.drawRect(120 + j * width - offsetX, i * height, width, height);
+							break;
+						case 1:
+							g.setColor(Color.GRAY);
+							break;
+						case 2:
+							g.setColor(Color.ORANGE);
+							break;
+						case 3:
+							g.setColor(Color.RED);
+							break;
+						default:
+							g.setColor(Color.BLACK);
+							break;
+						}
+						if (map[i][j] != 0)
+							//							g.fillRect(120 + j * width - offsetX, i * height, width, height);
+							g.drawImage(img, 120 + j * width - offsetX, i * 30, 120 + j * width - offsetX + 30,
+									i * 30 + 30, (map[i][j] - 1) * imgSize, 0,
+									(map[i][j] - 1) * imgSize + imgSize, imgSize, this);
+						if (pool) {
+							g.setColor(Color.black);
+							g.drawString(j + "," + i, 120 + j * width - offsetX, (i + 1) * height);
+						}
+					}
+				}
+				g.setColor(Color.GREEN);
+				Graphics2D g2 = (Graphics2D) g;
+				BasicStroke bs = new BasicStroke(5);
+				g2.setStroke(bs);
+				//			g.drawRect((int) nowChip.x, (int) nowChip.y, nowChip.width, nowChip.height);
+				sc.draw(g);
+			}
+			//------------------------------------------------------ここまで----------------------------------------------
+			g.setColor(Color.WHITE);
+			g.fillRect(0, 0, 120, HEIGHT);
+			g.setColor(Color.black);
+			g.drawLine(120, 0, 120, 1000);
+			for (int i = 0; i < chipInfo.length; i++) {
+				for (int j = 0; j < chipInfo[i].length; j++) {
+					switch (chipInfo[i][j]) {
 					case 0:
 						g.setColor(Color.black);
-						g.drawRect(120 + j * width - offsetX, i * height, width, height);
+						g.drawRect(j * width - offsetX, i * height, width, height);
 						break;
 					case 1:
-						g.setColor(Color.GRAY);
+						//						g.setColor(Color.GRAY);
+						//						g.fillRect(j * 30, i * 30, 30, 30);
 						break;
 					case 2:
 						g.setColor(Color.ORANGE);
+						g.fillRect(j * 30, i * 30, 30, 30);
 						break;
 					case 3:
 						g.setColor(Color.RED);
+						g.fillRect(j * 30, i * 30, 30, 30);
 						break;
 					default:
 						g.setColor(Color.BLACK);
+						g.fillRect(j * 30, i * 30, 30, 30);
 						break;
 					}
-					if (map[i][j] != 0)
-						g.fillRect(120 + j * width - offsetX, i * height, width, height);
-					if (pool) {
-						g.setColor(Color.black);
-						g.drawString(j + "," + i, 120 + j * width - offsetX, (i + 1) * height);
-					}
+					if (chipInfo[i][j] != 0)
+						g.drawImage(img, j * 30, i * 30, j * 30 + 30,
+								i * 30 + 30, (chipInfo[i][j] - 1) * imgSize, 0,
+								(chipInfo[i][j] - 1) * imgSize + imgSize, imgSize, this);
 				}
 			}
 			g.setColor(Color.GREEN);
 			Graphics2D g2 = (Graphics2D) g;
 			BasicStroke bs = new BasicStroke(5);
 			g2.setStroke(bs);
-			//			g.drawRect((int) nowChip.x, (int) nowChip.y, nowChip.width, nowChip.height);
-			sc.draw(g);
+			g.drawRect((int) nowSelect.x, (int) nowSelect.y, nowSelect.width, nowSelect.height);
 		}
-		//------------------------------------------------------ここまで----------------------------------------------
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, 120, HEIGHT);
-		g.setColor(Color.black);
-		g.drawLine(120, 0, 120, 1000);
-		for (int i = 0; i < chipInfo.length; i++) {
-			for (int j = 0; j < chipInfo[i].length; j++) {
-				switch (chipInfo[i][j]) {
-				case 0:
-					break;
-				case 1:
-					g.setColor(Color.GRAY);
-					g.fillRect(j * 30, i * 30, 30, 30);
-					break;
-				case 2:
-					g.setColor(Color.ORANGE);
-					g.fillRect(j * 30, i * 30, 30, 30);
-					break;
-				case 3:
-					g.setColor(Color.RED);
-					g.fillRect(j * 30, i * 30, 30, 30);
-					break;
-				default:
-					g.setColor(Color.BLACK);
-					g.fillRect(j * 30, i * 30, 30, 30);
-					break;
-				}
-			}
-		}
-		g.setColor(Color.GREEN);
-		Graphics2D g2 = (Graphics2D) g;
-		BasicStroke bs = new BasicStroke(5);
-		g2.setStroke(bs);
-		g.drawRect((int) nowSelect.x, (int) nowSelect.y, nowSelect.width, nowSelect.height);
 
 	}
 
@@ -130,7 +157,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int keycode = e.getKeyCode();
-
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		int mod = e.getModifiersEx();
 		if ((mod & InputEvent.CTRL_DOWN_MASK) != 0) {
 			if (keycode == KeyEvent.VK_S) {
@@ -169,7 +196,6 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 		while (true) {
 			repaint();
 			nowSelect.update();
-
 			if (map != null & sc != null)
 				offsetX = (int) ((sc.x - 120) / (WIDTH - 120) * map[0].length * width);
 			try {
