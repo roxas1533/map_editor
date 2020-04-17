@@ -103,6 +103,7 @@ public class MapEditor extends JFrame {
 								30);
 						title = file.getName() + " - マップエディタ";
 						setTitle(title);
+						nowSelect= file;
 						// 最後にファイルを閉じてリソースを開放する
 						br.close();
 
