@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MediaTracker;
+import java.awt.RenderingHints;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -35,6 +36,9 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 	int[][] chipInfo = {
 			{ 0, 1, 2, 3 },
 			{ 4, 5, 6, 7 },
+			{ 8, 9, 10, 11 },
+			{ 12, 13, 14, 15 },
+
 	};
 	private GameObject nowSelect = new GameObject(0, 0, 30, 30);
 	private GameObject nowChip = new GameObject(120, 0, width, height);
@@ -62,6 +66,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		//------------------------------------------------------マップ本体----------------------------------------------
 		if (tracker.checkID(0, true)) {
 			imgSize = img.getWidth(this) / 4;
@@ -89,9 +95,10 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 						}
 						if (map[i][j] != 0)
 							//							g.fillRect(120 + j * width - offsetX, i * height, width, height);
-							g.drawImage(img, 120 + j * width - offsetX, i * 30, 120 + j * width - offsetX + 30,
-									i * 30 + 30, (map[i][j] - 1) * imgSize, 0,
-									(map[i][j] - 1) * imgSize + imgSize, imgSize, this);
+							((Graphics2D) g).drawImage(img, 120 + j * width - offsetX, i * 30,
+									120 + j * width - offsetX + 30,
+									i * 30 + 30, (map[i][j] - 1) % 4 * imgSize, map[i][j] / 5 * 128,
+									(map[i][j] - 1) % 4 * imgSize + imgSize, imgSize + map[i][j] / 5 * 128, this);
 						if (pool) {
 							g.setColor(Color.black);
 							g.drawString(j + "," + i, 120 + j * width - offsetX, (i + 1) * height);
@@ -136,8 +143,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 					}
 					if (chipInfo[i][j] != 0)
 						g.drawImage(img, j * 30, i * 30, j * 30 + 30,
-								i * 30 + 30, (chipInfo[i][j] - 1) * imgSize, 0,
-								(chipInfo[i][j] - 1) * imgSize + imgSize, imgSize, this);
+								i * 30 + 30, (chipInfo[i][j] - 1) % 4 * imgSize, chipInfo[i][j] / 5 * 128,
+								(chipInfo[i][j] - 1) % 4 * imgSize + imgSize, imgSize + chipInfo[i][j] / 5 * 128, this);
 				}
 			}
 			g.setColor(Color.GREEN);
