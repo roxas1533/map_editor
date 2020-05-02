@@ -54,13 +54,14 @@ public class MapEditor extends JFrame {
 		menuitem1_3.setEnabled(false);
 		JMenuItem menuitem2_1 = new JMenuItem("    座標の表示");
 
-
 		menuitem2_1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				MainPanel.pool=!MainPanel.pool;
+				MainPanel.pool = !MainPanel.pool;
 			}
 		});
 		menuitem1_1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				T subwindow = new T();
 				subwindow.setVisible(true);
@@ -69,6 +70,7 @@ public class MapEditor extends JFrame {
 		});
 
 		menuitem1_2.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser filechooser = new JFileChooser();
 				FileFilter filter = new FileNameExtensionFilter("マップファイル(*.map)", "map");
@@ -103,9 +105,10 @@ public class MapEditor extends JFrame {
 								30);
 						title = file.getName() + " - マップエディタ";
 						setTitle(title);
-						nowSelect= file;
+						nowSelect = file;
 						// 最後にファイルを閉じてリソースを開放する
 						br.close();
+						MapEditor.frame.menuitem1_3.setEnabled(true);
 
 					} catch (IOException ex) {
 						ex.printStackTrace();
@@ -115,6 +118,7 @@ public class MapEditor extends JFrame {
 		});
 
 		menuitem1_3.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser filechooser = new JFileChooser();
 				FileFilter filter = new FileNameExtensionFilter("マップファイル(*.map)", "map");
@@ -248,6 +252,7 @@ class P extends JPanel implements ActionListener {
 
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
 			MainPanel.map = new int[Integer.parseInt(tate.getText())][Integer.parseInt(yoko.getText())];
