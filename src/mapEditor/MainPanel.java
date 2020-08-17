@@ -102,8 +102,9 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 							//							g.fillRect(120 + j * width - offsetX, i * height, width, height);
 							((Graphics2D) g).drawImage(img, 120 + j * width - offsetX, i * 30,
 									120 + j * width - offsetX + 30,
-									i * 30 + 30, (map[i][j] - 1) % 4 * imgSize, map[i][j] / 5 * imgSize,
-									(map[i][j] - 1) % 4 * imgSize + imgSize, imgSize + map[i][j] / 5 * imgSize, this);
+									i * 30 + 30, (map[i][j] - 1) % 4 * imgSize, (map[i][j] - 1) / 4 * imgSize,
+									(map[i][j] - 1) % 4 * imgSize + imgSize,
+									imgSize + (map[i][j] - 1) / 4 * imgSize, this);
 						if (pool) {
 							g.setColor(Color.black);
 							g.drawString(j + "," + i, 120 + j * width - offsetX, (i + 1) * height);
