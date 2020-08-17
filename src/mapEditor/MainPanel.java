@@ -33,13 +33,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 	static int offsetX;
 	static boolean pool;
 	int imgSize = 0;
-	int[][] chipInfo = {
-			{ 0, 1, 2, 3 },
-			{ 4, 5, 6, 7 },
-			{ 8, 9, 10, 11 },
-			{ 12, 13, 14, 15 },
-
-	};
+	int[][] chipInfo = new int[10][4];
 	private GameObject nowSelect = new GameObject(0, 0, 30, 30);
 	private GameObject nowChip = new GameObject(120, 0, width, height);
 	BufferedImage img;
@@ -54,6 +48,16 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 			e.printStackTrace();
 		}
 		tracker.addImage(img, 0);
+		chipInfo = new int[img.getWidth(this) / 128][4];
+		int k = 0;
+		for (int i = 0; i < chipInfo.length; i++) {
+			for (int j = 0; j < chipInfo[0].length; j++) {
+				chipInfo[i][j] = k;
+				System.out.print(chipInfo[i][j]);
+				k++;
+			}
+			System.out.println();
+		}
 		setFocusable(true);
 		addKeyListener(this);
 		addMouseListener(this);
@@ -64,6 +68,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 
 	}
 
+	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -97,8 +102,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 							//							g.fillRect(120 + j * width - offsetX, i * height, width, height);
 							((Graphics2D) g).drawImage(img, 120 + j * width - offsetX, i * 30,
 									120 + j * width - offsetX + 30,
-									i * 30 + 30, (map[i][j] - 1) % 4 * imgSize, map[i][j] / 5 * 128,
-									(map[i][j] - 1) % 4 * imgSize + imgSize, imgSize + map[i][j] / 5 * 128, this);
+									i * 30 + 30, (map[i][j] - 1) % 4 * imgSize, map[i][j] / 5 * imgSize,
+									(map[i][j] - 1) % 4 * imgSize + imgSize, imgSize + map[i][j] / 5 * imgSize, this);
 						if (pool) {
 							g.setColor(Color.black);
 							g.drawString(j + "," + i, 120 + j * width - offsetX, (i + 1) * height);
@@ -143,8 +148,9 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 					}
 					if (chipInfo[i][j] != 0)
 						g.drawImage(img, j * 30, i * 30, j * 30 + 30,
-								i * 30 + 30, (chipInfo[i][j] - 1) % 4 * imgSize, chipInfo[i][j] / 5 * 128,
-								(chipInfo[i][j] - 1) % 4 * imgSize + imgSize, imgSize + chipInfo[i][j] / 5 * 128, this);
+								i * 30 + 30, (chipInfo[i][j] - 1) % 4 * imgSize, (chipInfo[i][j] - 1) / 4 * imgSize,
+								(chipInfo[i][j] - 1) % 4 * imgSize + imgSize,
+								imgSize + (chipInfo[i][j] - 1) / 4 * imgSize, this);
 				}
 			}
 			g.setColor(Color.GREEN);
