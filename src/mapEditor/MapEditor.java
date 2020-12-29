@@ -106,6 +106,7 @@ public class MapEditor extends JFrame {
 						title = file.getName() + " - マップエディタ";
 						setTitle(title);
 						nowSelect = file;
+						MainPanel.changed = false;
 						// 最後にファイルを閉じてリソースを開放する
 						br.close();
 						MapEditor.frame.menuitem1_3.setEnabled(true);
@@ -147,7 +148,7 @@ public class MapEditor extends JFrame {
 							fe.write("\r\n");
 						}
 						title = new File(saveFile).getName() + " - マップエディタ";
-						panel.changed = false;
+						MainPanel.changed = false;
 						setTitle(title);
 						fe.close();
 					} catch (IOException ex) {
@@ -267,6 +268,7 @@ class P extends JPanel implements ActionListener {
 			MapEditor.nowSelect = null;
 			MapEditor.title = "無題 - マップエディタ";
 			MapEditor.frame.setTitle(MapEditor.title);
+			MainPanel.changed = false;
 			w.dispose();
 		} catch (NumberFormatException ex) {
 			JOptionPane.showMessageDialog(this, new JLabel("0以上の半角数字を入力してください"));

@@ -29,7 +29,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 	static Scroll sc;
 	int width = 30;
 	int height = 30;
-	public boolean changed;
+	public static boolean changed;
 	static int offsetX;
 	static boolean pool;
 	int imgSize = 0;
@@ -189,8 +189,12 @@ public class MainPanel extends JPanel implements KeyListener, Runnable, MouseLis
 							fe.write("\r\n");
 						}
 						fe.close();
-						if (changed)
+						if (changed) {
 							MapEditor.frame.setTitle(MapEditor.title.substring(3));
+							MapEditor.title = MapEditor.title.substring(3);
+						}
+						changed = false;
+
 					} catch (IOException e1) {
 						// TODO 自動生成された catch ブロック
 						e1.printStackTrace();
